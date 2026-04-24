@@ -1,19 +1,16 @@
-using System;
 using System.Linq;
 using System.Reflection;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Encounters;
 using TaleWorlds.CampaignSystem.GameMenus;
 using TaleWorlds.CampaignSystem.Settlements;
+using TaleWorlds.CampaignSystem.Settlements.Locations;
 
 namespace MeleePracticeFight
 {
     public class MeleePracticeFightBehavior : CampaignBehaviorBase
     {
-        internal static bool IsMeleePracticeActive { get; private set; } = false;
-
-        // Cached via reflection since ArenaMasterCampaignBehavior is internal to SandBox.dll
-        private static MethodInfo? _enterPracticeConsequence;
+        internal static bool IsMeleePracticeActive { get; private set; }
 
         public override void RegisterEvents()
         {
@@ -37,53 +34,23 @@ namespace MeleePracticeFight
         private bool MenuCondition(MenuCallbackArgs args)
         {
             args.optionLeaveType = GameMenuOption.LeaveType.Mission;
-            Settlement? s = Settlement.CurrentSettlement;
-            return s != null && s.IsTown;
+            return Settlement.CurrentSettlement?.IsTown == true;
         }
-
-        private static void Msg(string text) =>
-            System.Diagnostics.Debug.WriteLine($"[MPF] {text}");
 
         private void MenuConsequence(MenuCallbackArgs args)
         {
             IsMeleePracticeActive = true;
 
-            // Resolve ArenaMasterCampaignBehavior.game_menu_enter_practice_fight_on_consequence once and cache it.
-            // This is the exact code path the vanilla "Enter Practice Fight" button uses.
-            object? behaviorInstance = null;
-            if (_enterPracticeConsequence == null)
-            {
-                var sandboxAsm = AppDomain.CurrentDomain.GetAssemblies()
-                    .FirstOrDefault(a => a.GetName().Name == "SandBox");
-                if (sandboxAsm == null) { Msg("ERROR: SandBox assembly not found"); ResetMeleePracticeFlag(); return; }
+            PlayerEncounter.LocationEncounter.CreateAndOpenMissionController(
+                LocationComplex.Current.GetLocationWithId("arena"), null, null, null);
 
-                var behaviorType = sandboxAsm.GetType("SandBox.CampaignBehaviors.ArenaMasterCampaignBehavior");
-                if (behaviorType == null) { Msg("ERROR: ArenaMasterCampaignBehavior not found"); ResetMeleePracticeFlag(); return; }
-
-                _enterPracticeConsequence = behaviorType.GetMethod(
-                    "game_menu_enter_practice_fight_on_consequence",
-                    BindingFlags.NonPublic | BindingFlags.Instance);
-                if (_enterPracticeConsequence == null) { Msg("ERROR: consequence method not found"); ResetMeleePracticeFlag(); return; }
-
-                Msg("Resolved consequence method");
-            }
-
-            // Get the live behavior instance from Campaign
-            behaviorInstance = Campaign.Current.CampaignBehaviorManager
+            // Mirror _enteredPracticeFightFromMenu = true from the vanilla consequence
+            // so that rewards and end-of-fight logic behave identically
+            var instance = Campaign.Current.CampaignBehaviorManager
                 .GetBehaviors<CampaignBehaviorBase>()
                 .FirstOrDefault(b => b.GetType().Name == "ArenaMasterCampaignBehavior");
-            if (behaviorInstance == null) { Msg("ERROR: behavior instance not found"); ResetMeleePracticeFlag(); return; }
-
-            try
-            {
-                _enterPracticeConsequence.Invoke(behaviorInstance, new object[] { args });
-            }
-            catch (Exception ex)
-            {
-                var inner = ex.InnerException ?? ex;
-                Msg($"ERROR invoking: {inner.GetType().Name}: {inner.Message}");
-                ResetMeleePracticeFlag();
-            }
+            instance?.GetType()
+                .GetField("_enteredPracticeFightFromMenu", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(instance, true);
         }
 
         internal static void ResetMeleePracticeFlag() => IsMeleePracticeActive = false;
