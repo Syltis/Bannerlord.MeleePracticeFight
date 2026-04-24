@@ -24,7 +24,7 @@ namespace MeleePracticeFight
             starter.AddGameMenuOption(
                 menuId:      "town_arena",
                 optionId:    "town_arena_melee_practice",
-                optionText:  "{=mpf_menu}Practice Fight (Melee Only)",
+                optionText:  "{=mpf_menu}Practice Fight (Melee)",
                 condition:   MenuCondition,
                 consequence: MenuConsequence,
                 isLeave:     false);

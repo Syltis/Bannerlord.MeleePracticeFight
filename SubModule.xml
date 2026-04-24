@@ -8,19 +8,19 @@
   <ModuleCategory value="Singleplayer"/>
   <ModuleType value="Community"/>
   <DependedModules>
-    <DependedModule Id="Native"/>
-    <DependedModule Id="SandBoxCore"/>
-    <DependedModule Id="Sandbox"/>
-    <DependedModule Id="Bannerlord.Harmony"/>
-    <DependedModule Id="StoryMode" DependentVersion="v1.0.0" Optional="true"/>
+    <DependedModule Id="Native" DependentVersion="e1.3.15"/>
+    <DependedModule Id="SandBoxCore" DependentVersion="e1.3.15"/>
+    <DependedModule Id="Sandbox" DependentVersion="e1.3.15"/>
+    <DependedModule Id="Bannerlord.Harmony" DependentVersion="e1.0.0"/>
+    <DependedModule Id="StoryMode" DependentVersion="e1.3.15" Optional="true"/>
   </DependedModules>
   <!-- BUTR/BLSE community metadata — enforces load order when BLSE is present -->
   <DependedModuleMetadatas>
-    <DependedModuleMetadata id="Native" order="LoadBeforeThis"/>
-    <DependedModuleMetadata id="SandBoxCore" order="LoadBeforeThis"/>
-    <DependedModuleMetadata id="Sandbox" order="LoadBeforeThis"/>
-    <DependedModuleMetadata id="Bannerlord.Harmony" order="LoadBeforeThis"/>
-    <DependedModuleMetadata id="StoryMode" order="LoadBeforeThis" optional="true"/>
+    <DependedModuleMetadata id="Native" order="LoadBeforeThis" version="e1.3.15"/>
+    <DependedModuleMetadata id="SandBoxCore" order="LoadBeforeThis" version="e1.3.15"/>
+    <DependedModuleMetadata id="Sandbox" order="LoadBeforeThis" version="e1.3.15"/>
+    <DependedModuleMetadata id="Bannerlord.Harmony" order="LoadBeforeThis" version="e1.3.15"/>
+    <DependedModuleMetadata id="StoryMode" order="LoadBeforeThis" version="e1.3.15" optional="true"/>
   </DependedModuleMetadatas>
   <SubModules>
     <SubModule>
