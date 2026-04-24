@@ -86,7 +86,7 @@ x86/
 *.vsix
 
 # Claude settings
-.claude/
+.claude/settings.local.json
 
 # Launch Settings
 src/Properties/launchSettings.json

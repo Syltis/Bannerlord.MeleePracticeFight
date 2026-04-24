@@ -8,9 +8,26 @@ using TaleWorlds.MountAndBlade;
 namespace MeleePracticeFight
 {
     // ======================================================================
-    //  Mission behavior – drops ranged weapons from every spawning agent
+    //  Mission behavior – resets the melee-only flag when the mission ends.
+    //  Kept as a MissionBehavior so OnEndMission fires reliably.
     // ======================================================================
     public class MeleePracticeWeaponFilter : MissionBehavior
+    {
+        public override MissionBehaviorType BehaviorType => MissionBehaviorType.Other;
+
+        protected override void OnEndMission()
+        {
+            base.OnEndMission();
+            MeleePracticeFightBehavior.ResetMeleePracticeFlag();
+        }
+    }
+
+    // ======================================================================
+    //  PATCH 1 – Strip ranged weapons from AgentBuildData before the agent
+    //  is built, so they never spawn with them and nothing drops to the ground.
+    // ======================================================================
+    [HarmonyPatch(typeof(Mission), "SpawnAgent")]
+    public static class Patch_Mission_SpawnAgent
     {
         private static readonly HashSet<WeaponClass> RangedClasses = new HashSet<WeaponClass>
         {
@@ -24,32 +41,30 @@ namespace MeleePracticeFight
             WeaponClass.Bolt,
         };
 
-        public override MissionBehaviorType BehaviorType => MissionBehaviorType.Other;
-
-        public override void OnAgentBuild(Agent agent, Banner banner)
+        public static void Prefix(AgentBuildData agentBuildData)
         {
-            base.OnAgentBuild(agent, banner);
+            if (!MeleePracticeFightBehavior.IsMeleePracticeActive) return;
+
+            Equipment equipment = agentBuildData.AgentOverridenSpawnEquipment;
+            if (equipment is null) return;
+
             for (EquipmentIndex slot = EquipmentIndex.Weapon0; slot <= EquipmentIndex.Weapon3; slot++)
             {
-                MissionWeapon weapon = agent.Equipment[slot];
-                if (weapon.IsEmpty) continue;
-                if (weapon.Item?.HasWeaponComponent == true &&
-                    weapon.Item.Weapons.Any(w => RangedClasses.Contains(w.WeaponClass)))
-                    agent.DropItem(slot);
+                EquipmentElement elem = equipment[slot];
+                if (!elem.IsEmpty &&
+                    elem.Item?.HasWeaponComponent is true &&
+                    elem.Item.Weapons.Any(w => RangedClasses.Contains(w.WeaponClass)))
+                {
+                    equipment[slot] = EquipmentElement.Invalid;
+                }
             }
-        }
-
-        protected override void OnEndMission()
-        {
-            base.OnEndMission();
-            MeleePracticeFightBehavior.ResetMeleePracticeFlag();
         }
     }
 
     // ======================================================================
-    //  PATCH 1 – Inject weapon filter before Mission.AfterStart iterates behaviors.
-    //  Must be a PREFIX on Mission (not a postfix on a behavior inside it) so that
-    //  AddMissionBehavior runs before the list enumeration begins.
+    //  PATCH 2 – Inject MeleePracticeWeaponFilter before Mission.AfterStart
+    //  iterates behaviors. Must be a PREFIX so AddMissionBehavior runs before
+    //  the list enumeration begins (postfix would cause Collection modified).
     // ======================================================================
     [HarmonyPatch(typeof(Mission), "AfterStart")]
     public static class Patch_Mission_AfterStart

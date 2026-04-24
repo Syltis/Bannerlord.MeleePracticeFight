@@ -27,17 +27,16 @@ namespace MeleePracticeFight
                 optionText:  "{=mpf_menu}Practice Fight (Melee Only)",
                 condition:   MenuCondition,
                 consequence: MenuConsequence,
-                isLeave:     false,
-                index:       3);
+                isLeave:     false);
         }
 
-        private bool MenuCondition(MenuCallbackArgs args)
+        private static bool MenuCondition(MenuCallbackArgs args)
         {
-            args.optionLeaveType = GameMenuOption.LeaveType.Mission;
-            return Settlement.CurrentSettlement?.IsTown == true;
+            args.optionLeaveType = GameMenuOption.LeaveType.PracticeFight;
+            return Settlement.CurrentSettlement?.IsTown is true;
         }
 
-        private void MenuConsequence(MenuCallbackArgs args)
+        private static void MenuConsequence(MenuCallbackArgs args)
         {
             IsMeleePracticeActive = true;
 
@@ -50,7 +49,8 @@ namespace MeleePracticeFight
                 .GetBehaviors<CampaignBehaviorBase>()
                 .FirstOrDefault(b => b.GetType().Name == "ArenaMasterCampaignBehavior");
             instance?.GetType()
-                .GetField("_enteredPracticeFightFromMenu", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(instance, true);
+                .GetField("_enteredPracticeFightFromMenu", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.SetValue(instance, true);
         }
 
         internal static void ResetMeleePracticeFlag() => IsMeleePracticeActive = false;
