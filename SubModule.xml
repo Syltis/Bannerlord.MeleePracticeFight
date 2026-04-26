@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/BUTR/Bannerlord.XmlSchemas/master/SubModule.xsd">
-  <Name value="MeleePracticeFight"/>
+  <Name value="Melee Practice Fights"/>
   <Id value="MeleePracticeFight"/>
-  <Version value="v1.0.0"/>
+  <Version value="v1.1.0"/>
   <DefaultModule value="false"/>
   <ModuleCategory value="Singleplayer"/>
   <ModuleType value="Community"/>
@@ -11,7 +11,7 @@
     <DependedModule Id="Native" DependentVersion="e1.3.15"/>
     <DependedModule Id="SandBoxCore" DependentVersion="e1.3.15"/>
     <DependedModule Id="Sandbox" DependentVersion="e1.3.15"/>
-    <DependedModule Id="Bannerlord.Harmony" DependentVersion="e1.0.0"/>
+    <DependedModule Id="Bannerlord.Harmony" DependentVersion="e2.4.0"/>
     <DependedModule Id="StoryMode" DependentVersion="e1.3.15" Optional="true"/>
   </DependedModules>
   <!-- BUTR/BLSE community metadata — enforces load order when BLSE is present -->
@@ -19,7 +19,7 @@
     <DependedModuleMetadata id="Native" order="LoadBeforeThis" version="e1.3.15"/>
     <DependedModuleMetadata id="SandBoxCore" order="LoadBeforeThis" version="e1.3.15"/>
     <DependedModuleMetadata id="Sandbox" order="LoadBeforeThis" version="e1.3.15"/>
-    <DependedModuleMetadata id="Bannerlord.Harmony" order="LoadBeforeThis" version="e1.3.15"/>
+    <DependedModuleMetadata id="Bannerlord.Harmony" order="LoadBeforeThis" version="e2.4.0"/>
     <DependedModuleMetadata id="StoryMode" order="LoadBeforeThis" version="e1.3.15" optional="true"/>
   </DependedModuleMetadatas>
   <SubModules>

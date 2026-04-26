@@ -33,10 +33,9 @@
       <HintPath>$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.Localization.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <!-- Harmony – copied into our module bin so .NET can find it without relying on load order -->
     <Reference Include="0Harmony">
       <HintPath>$(GameFolder)\Modules\Bannerlord.Harmony\bin\Win64_Shipping_Client\0Harmony.dll</HintPath>
-      <Private>true</Private>
+      <Private>false</Private>
     </Reference>
 
 	<!-- Needed for GameMenus, Overlay, Encounters, Settlements, Actions -->
